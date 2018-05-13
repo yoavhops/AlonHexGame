@@ -17,8 +17,6 @@ public class Player : MonoBehaviour
 
     public HexTileData StartPoistion;
 
-    public List<HexTile> MyTiles = new List<HexTile>();
-
     public List<HexTile> OwnedHexTiles = new List<HexTile>();
 
     public Material PlayerMaterial;
@@ -44,22 +42,27 @@ public class Player : MonoBehaviour
     public void TileClicked(HexTile hexTile)
     {
         //check GameManagerState.
-        if (GameManager.Singleton.GameState != GameState.BuyingTile)
+        if (GameManager.Singleton.GameState != GameState.Idle)
         {
             return;
         }
 
-        if (IsNeighbor(hexTile))
+        if (!IsNeighbor(hexTile))
         {
-            Debug.Log("I am near");
+            return;
         }
-        else
+
+        if (!HasResource(HexUtils.CalcHexPrice(hexTile.Data)))
         {
-            Debug.Log("I am LD");
+            Debug.Log("Not enoght resources");
+            return;
         }
+
+        BuyingTileCommand.Create(hexTile);
 
     }
 
+    
 
 	// Use this for initialization
 	void Start ()
@@ -93,11 +96,15 @@ public class Player : MonoBehaviour
     public void OnBoardReady()
     {
         var startHex = GridManager.Singleton.GetHex(StartPoistion);
-        OwnedHexTiles.Add(startHex);
-        startHex.SetOwner(this);
+        AddTileToPlayer(startHex);
         //add my start point.
     }
 
+    public void AddTileToPlayer(HexTile hexTile)
+    {
+        OwnedHexTiles.Add(hexTile);
+        hexTile.SetOwner(this);
+    }
 
     public Action ResourceTimer(HexEdgeType resourceType)
     {
@@ -122,4 +129,10 @@ public class Player : MonoBehaviour
 	    }
         
 	}
+
+    public bool HasResource(Price otherPrice)
+    {
+        return PlayerResources.HasResource(otherPrice);
+    }
+
 }

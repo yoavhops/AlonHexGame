@@ -33,7 +33,6 @@ public class GameManager : MonoBehaviour
         switch (GameState)
         {
             case GameState.Idle:
-                ChangeState(GameState.BuyingTile);
                 EventManager.FireHexClicked(hexTile);
                 break;
 

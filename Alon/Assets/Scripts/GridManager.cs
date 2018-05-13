@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 public class GridManager : MonoBehaviour
 {
@@ -35,9 +36,9 @@ public class GridManager : MonoBehaviour
                 var startX = Mathf.Max(-y, -boardSize);
                 var realX = startX + x;
 
-                var hexTileData = new HexTileData(realX, realY);
+                var hexTileData = new HexTileData(realX, realY, null);
                 var newHex = Instantiate(HexTilePrefab, transform);
-                newHex.Init(hexTileData);
+                newHex.Init(hexTileData, null, HexTileRole.InGrid);
                 newHex.transform.position = GridManagerUtils.GetHexTilePosition(hexTileData);
 
                 _allTiles[new Vector2Int(realX, realY)] = newHex;
@@ -65,6 +66,31 @@ public class GridManager : MonoBehaviour
         return GetHex(hexTileData.X, hexTileData.Y);
     }
 
+    public void TileWasBought(HexTile hexTile)
+    {
+        Player.MyPlayer.AddTileToPlayer(hexTile);
+        NeighborsUpdate(hexTile);
+        //neighbors are checked in buying tile..why?
+    }
+
+    public void NeighborsUpdate(HexTile hexTile)
+    {
+        foreach (var edgeData in hexTile.Data.HexEdgesData)
+        {
+            if (!edgeData.IsOpen)
+            {
+                continue;
+            }
+            var direction = edgeData.HexDiraction;
+            var neighborTile = HexUtils.GetNeighborTile(hexTile, direction);
+            if (neighborTile != null)
+            {
+                var neighborEdge = neighborTile.Data.HexEdgesData[(int)HexUtils.OppsiteHex[direction]];
+                neighborEdge.HexEdgeType = edgeData.HexEdgeType;
+                neighborTile.SyncVisual();
+            }   
+        }
+    }
 
     // Use this for initialization
     void Start () {

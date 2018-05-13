@@ -4,35 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum HexEdgeType
-{
-    Wood,
-    Stone,
-    Gold,
-    Food,
-    Deset,    
-}
-
-public enum HexDiraction
-{
-    RightUp,
-    Right,
-    RightDown,
-    LeftDown,
-    Left,
-    LeftUp
-}
 
 [Serializable]
 public class HexTileData
 {
     public int X;
     public int Y;
-    
-    public HexTileData(int x, int y)
+    public List<HexEdgeData> HexEdgesData = new List<HexEdgeData>();
+    public Player Owner;
+
+
+    public HexTileData(int x, int y, Player owner)
     {
         X = x;
         Y = y;
+        Owner = owner;
+
+        var hexDiractions = Utils.EnumUtil.GetValues<HexDiraction>();
+
+        foreach (var hexDiraction in hexDiractions)
+        {
+            HexEdgesData.Add(new HexEdgeData(HexEdgeType.Desert, hexDiraction));
+        }
+    }
+
+    public void SetOwner(Player newOwner)
+    {
+        Owner = newOwner;
     }
 
     public Vector2Int GetVector()
@@ -42,15 +40,25 @@ public class HexTileData
 
 }
 
+public enum HexTileRole
+{
+    InUI,
+    InGrid,
+}
+
 
 public class HexTile : MonoMono
 {
     public List<Transform> EdgesLocations;
-    public HexEdge HexEdgePrefab;
-    public HexTileData Data;
     private Player _myOwner;
-
     public Renderer OutRenderer;
+    public List<HexEdge> Edges;
+
+    // +++++++++++++
+
+    public HexTileData Data;
+    public HexTileRole HexTileRole;
+    public Action<HexTile> OnClickCallback;
 
 
     public static List<HexEdgeType> HexEdgeTypes = new List<HexEdgeType>()
@@ -59,7 +67,7 @@ public class HexTile : MonoMono
         HexEdgeType.Stone,
         HexEdgeType.Gold,
         HexEdgeType.Food,
-        HexEdgeType.Deset,
+        HexEdgeType.Desert,
     };
 
     public static Dictionary<HexDiraction, Vector2Int> HexEdgeOffset = new Dictionary<HexDiraction, Vector2Int>()
@@ -72,39 +80,53 @@ public class HexTile : MonoMono
         { HexDiraction.LeftUp, new Vector2Int(-1, 1) },
     };
 
-    public void SetOwner(Player newOwner)
+    void Awake()
     {
-        _myOwner = newOwner;
-        SyncVisual();
+    }
+
+    public void Init(HexTileData hexTileData, Player owner, HexTileRole hexTileRole)
+    {
+        HexTileRole = hexTileRole;
+        _myOwner = owner;
+        Data = hexTileData;
+
+        CreateEdges();
+
+        _isInitialized = true;
+        gameObject.name = "X : " + hexTileData.X + "Y : " + hexTileData.Y;
+    }
+
+    private void CreateEdges()
+    {
+        Edges.Clear();
+        for (int i = 0; i < EdgesLocations.Count; i++)
+        {
+            if (EdgesLocations[i].childCount > 0)
+            {
+                Destroy(EdgesLocations[i].GetChild(0).gameObject);
+            }
+            var hexEdge = Instantiate(HexMediator.HexPrefabDictionary[Data.HexEdgesData[i].HexEdgeType], EdgesLocations[i]);
+            hexEdge.Init(Data.HexEdgesData[i]);
+            Edges.Add(hexEdge);
+        }
     }
 
 
+    public void SetOwner(Player newOwner)
+    {
+        _myOwner = newOwner;
+        Debug.Log("Set owner worked - " + Player.MyPlayer);
+        SyncVisual();
+    }
 
     public void SyncVisual()
     {
-
         if (_myOwner != null)
         {
             OutRenderer.material = _myOwner.PlayerMaterial;
         }
 
-
-    }
-
-
-    void Awake()
-    {
-        foreach (var edgesLocation in EdgesLocations)
-        {
-            Instantiate(HexEdgePrefab, edgesLocation);
-        }
-    }
-
-    public void Init(HexTileData hexTileData)
-    {
-        Data = hexTileData;
-        _isInitialized = true;
-        gameObject.name = "X : " + hexTileData.X + "Y : " + hexTileData.Y;
+        CreateEdges();
     }
     
     public bool IsNeighborOfTile(HexTile otherTile)
@@ -133,15 +155,29 @@ public class HexTile : MonoMono
 
     public void OnMouseDown()
     {
-        Debug.Log("Clicked");
-        GameManager.Singleton.TileClicked(this);
+        switch (HexTileRole)
+        {
+            case HexTileRole.InGrid:
+                GameManager.Singleton.TileClicked(this);
+                break;
+            case HexTileRole.InUI:
+
+                if (OnClickCallback == null)
+                {
+                    return;
+                }
+
+                OnClickCallback(this);
+
+                break;
+        }
+
     }
 
 
 
     // Use this for initialization
     void Start () {
-
 	    if (!_isInitialized)
 	    {
 	        throw new NotImplementedException();

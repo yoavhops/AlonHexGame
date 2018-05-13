@@ -1,11 +1,58 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HexEdge : MonoBehaviour {
+public enum HexEdgeType
+{
+    Wood,
+    Stone,
+    Gold,
+    Food,
+    Desert,
+}
 
-	// Use this for initialization
-	void Start () {
+public enum HexDiraction
+{
+    RightUp,
+    Right,
+    RightDown,
+    LeftDown,
+    Left,
+    LeftUp
+}
+
+[Serializable]
+public class HexEdgeData
+{
+    public HexEdgeType HexEdgeType;
+    public HexDiraction HexDiraction;
+    public bool IsOpen = false;
+
+    public HexEdgeData(HexEdgeType hexEdgeType, HexDiraction hexDiraction, bool isOpen = false)
+    {
+        HexEdgeType = hexEdgeType;
+        HexDiraction = hexDiraction;
+        IsOpen = isOpen;
+    }
+}
+
+
+public class HexEdge : MonoBehaviour
+{
+    public HexEdgeData HexEdgeData;
+
+    void Awake()
+    {
+    }
+
+    public void Init(HexEdgeData hexEdgeData)
+    {
+        HexEdgeData = hexEdgeData;
+    }
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	

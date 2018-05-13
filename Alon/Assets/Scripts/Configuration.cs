@@ -11,6 +11,13 @@ public class PriceConfiguration
     public Price Price;
 }
 
+[Serializable]
+public class EdgeTypeChance
+{
+    public HexEdgeType HexEdgeType;
+    public int Chance;
+}
+
 
 public class Configuration : MonoBehaviour
 {
@@ -19,6 +26,7 @@ public class Configuration : MonoBehaviour
     public List<PriceConfiguration> PriceConfigurations;
     public List<PriceConfiguration> PricePerTurnConfigurations;
     public List<PriceConfiguration> RewardPerTurnConfigurations;
+    public List<EdgeTypeChance> EdgeTypeChances;
 
     public float TimeUntilPriceReducation = 10f;
 
@@ -60,6 +68,19 @@ public class Configuration : MonoBehaviour
             if (priceConfiguration.HexEdgeType == hexEdgeType)
             {
                 return priceConfiguration.Price;
+            }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public int GetChanceForType(HexEdgeType hexEdgeType)
+    {
+        foreach (var edgeTypeChance in EdgeTypeChances)
+        {
+            if (edgeTypeChance.HexEdgeType == hexEdgeType)
+            {
+                return edgeTypeChance.Chance;
             }
         }
 

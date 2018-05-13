@@ -28,6 +28,14 @@ public class Price
     public Resource Food;
     private List<Resource> AllResource  = new List<Resource>();
 
+    public void Init()
+    {
+        Wood = new Resource();
+        Stone = new Resource();
+        Gold = new Resource();
+        Food = new Resource();
+    }
+
     public List<Resource> GetAllResource()
     {
         AllResource.Clear();
@@ -81,5 +89,20 @@ public class Price
         }
     }
 
+    public void Add(Price other)
+    {
+        var otherPrice = other.GetAllResource();
+        var myPrice = GetAllResource();
+
+        for (int i = 0; i < myPrice.Count; i++)
+        {
+            myPrice[i].Amount += otherPrice[i].Amount;
+        }
+    }
+
+    public override string ToString()
+    {
+        return string.Format("Wood:{0}, Stone:{1}, Gold:{2}, Food:{3}", Wood.Amount, Stone.Amount, Gold.Amount, Food.Amount);
+    }
 
 }

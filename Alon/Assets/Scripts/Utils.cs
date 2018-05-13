@@ -37,6 +37,13 @@ public class Utils : MonoBehaviour
 
     public List<Timer> Timers = new List<Timer>();
 
+
+    public static bool RandomBool()
+    {
+        var myBool = (UnityEngine.Random.value < 0.5);
+        return myBool;
+    }
+
     public static class EnumUtil
     {
         public static IEnumerable<T> GetValues<T>()

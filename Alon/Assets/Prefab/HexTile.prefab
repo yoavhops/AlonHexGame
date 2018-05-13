@@ -352,7 +352,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 651e5fbf32c238349b5909c0ebac8615, type: 3}
+  - {fileID: 2100000, guid: 0934404fe1add4744adec23b539af7c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -498,9 +498,11 @@ MonoBehaviour:
   - {fileID: 4648350537472978}
   - {fileID: 4731256155600828}
   - {fileID: 4384120224880402}
-  HexEdgePrefab: {fileID: 114542032832558242, guid: cdc08d9cb78f3b94e8c2bf6a7bea9499,
-    type: 2}
   OutRenderer: {fileID: 23444185268477308}
+  Edges: []
   Data:
     X: 0
     Y: 0
+    HexEdgesData: []
+    Owner: {fileID: 0}
+  HexTileRole: 0
