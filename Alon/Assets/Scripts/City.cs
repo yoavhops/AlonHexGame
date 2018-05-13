@@ -1,16 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.AccessControl;
 using UnityEngine;
 
-public class Cities : MonoBehaviour {
+public class City
+{
+    public List<HexEdgeData> CityEdges;
+    public HexEdgeType CityResourceType {
+        get { return CityEdges[0].HexEdgeType; }
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }
+
