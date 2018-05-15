@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
@@ -87,6 +88,7 @@ public class GridManager : MonoBehaviour
             {
                 var neighborEdge = neighborTile.Data.HexEdgesData[(int)HexUtils.OppsiteHex[direction]];
                 neighborEdge.HexEdgeType = edgeData.HexEdgeType;
+                neighborEdge.IsOpen = edgeData.IsOpen;
                 neighborTile.SyncVisual();
             }   
         }

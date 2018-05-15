@@ -1464,9 +1464,10 @@ MonoBehaviour:
     X: 1
     Y: 1
     HexEdgesData: []
-    Owner: {fileID: 0}
+    _owner: {fileID: 0}
   OwnedHexTiles: []
   PlayerMaterial: {fileID: 2100000, guid: 95d567ae266e9124795328dc0ff0e983, type: 2}
+  MyCities: []
 --- !u!4 &1474803198
 Transform:
   m_ObjectHideFlags: 0
@@ -1724,7 +1725,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2055531163
 RectTransform:
   m_ObjectHideFlags: 0

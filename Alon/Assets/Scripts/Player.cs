@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
 
     public Material PlayerMaterial;
 
+    public List<City> MyCities = new List<City>();
+
 
 
     void Awake()
@@ -74,7 +76,27 @@ public class Player : MonoBehaviour
                 Configuration.Singleton.TimeUntilPriceReducation
             ));
         }
+
+	    new Timer(SumCityPayAndReward, Configuration.Singleton.TimeUntilPriceReducation);
+
 	}
+
+    public void SumCityPayAndReward()
+    {
+        foreach (var city in MyCities)
+        {
+            var bill = new Price();
+            bill.Init();
+            var resourceType = city.CityResourceType;
+            var rentPrice = Configuration.Singleton.GetPricePerTurnOfType(resourceType);
+            var addReward = Configuration.Singleton.GetRewardPerTurnOfType(resourceType);
+            bill.Add(addReward);
+            bill.Reduce(rentPrice);
+            bill.MultiplyPrice(city.CitySize);
+            PlayerResources.Add(bill);
+
+        }
+    }
 
     public bool IsNeighbor(HexTile hexTile)
     {
@@ -104,6 +126,15 @@ public class Player : MonoBehaviour
     {
         OwnedHexTiles.Add(hexTile);
         hexTile.SetOwner(this);
+        NewCitiesCheker(hexTile);
+    }
+
+    public void NewCitiesCheker(HexTile hexTile)
+    {
+        foreach (var city in CityUtils.CityCheckStart(hexTile.Data))
+        {
+            MyCities.Add(city);
+        }
     }
 
     public Action ResourceTimer(HexEdgeType resourceType)
@@ -116,7 +147,7 @@ public class Player : MonoBehaviour
 
     public void ResourceTimerEnded(HexEdgeType resourceType)
     {
-        Debug.Log("Timer ended for " + resourceType.ToString());
+        //Debug.Log("Timer ended for " + resourceType.ToString());
     }
 
 

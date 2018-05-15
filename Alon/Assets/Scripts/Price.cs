@@ -105,4 +105,12 @@ public class Price
         return string.Format("Wood:{0}, Stone:{1}, Gold:{2}, Food:{3}", Wood.Amount, Stone.Amount, Gold.Amount, Food.Amount);
     }
 
+    public void MultiplyPrice(int multiplier)
+    {
+        var myPrice = GetAllResource();
+        for (int i = 0; i < myPrice.Count; i++)
+        {
+            myPrice[i].Amount *= multiplier;           
+        }
+    }
 }

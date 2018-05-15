@@ -11,7 +11,16 @@ public class HexTileData
     public int X;
     public int Y;
     public List<HexEdgeData> HexEdgesData = new List<HexEdgeData>();
-    public Player Owner;
+    public Player _owner;
+
+    public Player Owner
+    {
+        get { return _owner; }
+        set
+        {
+            _owner = value;
+        }
+    }
 
 
     public HexTileData(int x, int y, Player owner)
@@ -24,7 +33,7 @@ public class HexTileData
 
         foreach (var hexDiraction in hexDiractions)
         {
-            HexEdgesData.Add(new HexEdgeData(HexEdgeType.Desert, hexDiraction));
+            HexEdgesData.Add(new HexEdgeData(this, HexEdgeType.Desert, hexDiraction));
         }
     }
 
@@ -50,7 +59,6 @@ public enum HexTileRole
 public class HexTile : MonoMono
 {
     public List<Transform> EdgesLocations;
-    private Player _myOwner;
     public Renderer OutRenderer;
     public List<HexEdge> Edges;
 
@@ -87,8 +95,8 @@ public class HexTile : MonoMono
     public void Init(HexTileData hexTileData, Player owner, HexTileRole hexTileRole)
     {
         HexTileRole = hexTileRole;
-        _myOwner = owner;
         Data = hexTileData;
+        Data.Owner = owner;
 
         CreateEdges();
 
@@ -114,16 +122,16 @@ public class HexTile : MonoMono
 
     public void SetOwner(Player newOwner)
     {
-        _myOwner = newOwner;
+        Data.Owner = newOwner;
         Debug.Log("Set owner worked - " + Player.MyPlayer);
         SyncVisual();
     }
 
     public void SyncVisual()
     {
-        if (_myOwner != null)
+        if (Data.Owner != null)
         {
-            OutRenderer.material = _myOwner.PlayerMaterial;
+            OutRenderer.material = Data.Owner.PlayerMaterial;
         }
 
         CreateEdges();

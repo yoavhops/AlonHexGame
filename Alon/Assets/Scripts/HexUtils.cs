@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using NUnit.Framework.Internal;
 using UnityEngine;
@@ -64,7 +65,7 @@ public static class HexUtils
 
         if (neighborTile == null)
         {
-            return new HexEdgeData(GetRandomEdgeType(), diraction);
+            return new HexEdgeData(myTile.Data, GetRandomEdgeType(), diraction);
         }
 
         var neighborEdge = neighborTile.Data.HexEdgesData[(int) OppsiteHex[diraction]];
@@ -73,12 +74,12 @@ public static class HexUtils
         {
             if (neighborTile.Data.Owner == null)
             {
-                return new HexEdgeData(GetRandomEdgeType(), diraction, Utils.RandomBool());
+                return new HexEdgeData(myTile.Data, GetRandomEdgeType(), diraction, Utils.RandomBool());
             }
-            return new HexEdgeData(GetRandomEdgeType(), diraction);
+            return new HexEdgeData(myTile.Data ,GetRandomEdgeType(), diraction);
         }
         
-        return new HexEdgeData(neighborEdge.HexEdgeType, diraction, true);
+        return new HexEdgeData(myTile.Data ,neighborEdge.HexEdgeType, diraction, true);
     }
 
 
@@ -126,5 +127,25 @@ public static class HexUtils
         return ans;
     }
 
+    public static HexEdgeData GetClockwiseEdge(HexTileData hexTileData, HexEdgeData currentHex, int index)
+    {
+        var size = currentHex.MyHexTile.HexEdgesData.Count;
+        var newIndex = ((int) currentHex.HexDiraction + size + index) % size;
+        return hexTileData.HexEdgesData[newIndex];
+    }
+
+    public static HexEdgeData GetConnectedEdge(HexTileData hexTileData, HexEdgeData edgeData)
+    {
+        var hexDiraction = edgeData.HexDiraction;
+        var hexTile = GridManager.Singleton.GetHex(hexTileData.GetVector());
+        var nieghborTile = GetNeighborTile(hexTile, hexDiraction);
+        if (nieghborTile == null)
+        {
+            return null;
+        }
+
+        return nieghborTile.Data.HexEdgesData[(int)HexUtils.OppsiteHex[hexDiraction]];
+
+    }
 
 }

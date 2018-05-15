@@ -27,10 +27,12 @@ public class HexEdgeData
 {
     public HexEdgeType HexEdgeType;
     public HexDiraction HexDiraction;
+    public HexTileData MyHexTile;
     public bool IsOpen = false;
 
-    public HexEdgeData(HexEdgeType hexEdgeType, HexDiraction hexDiraction, bool isOpen = false)
+    public HexEdgeData(HexTileData myHexTile, HexEdgeType hexEdgeType, HexDiraction hexDiraction, bool isOpen = false)
     {
+        MyHexTile = myHexTile;
         HexEdgeType = hexEdgeType;
         HexDiraction = hexDiraction;
         IsOpen = isOpen;

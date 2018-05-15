@@ -103,7 +103,6 @@ public class BuyingTileCommand : MonoBehaviour
         Clear();
 
     }
-
     private void Clear()
     {
         var uiChooseTile = UIManager.Singleton.UIChoosingTile;
